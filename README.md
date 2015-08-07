@@ -24,7 +24,8 @@ metrics for individual actor types.** That way you can identify overly chatty or
 Currently Akka.Monitoring supports the following monitoring systems out of the box:
 
 1. **[StatsD](https://github.com/etsy/statsd)** - via a lightweight dependency on [NStatsD](https://github.com/robbihun/NStatsD.Client "A .NET 4.0 client for Etsy's StatsD server.").
-2. **[Microsoft AppInsights](https://www.visualstudio.com/features/application-insights-vs)
+2. **[Microsoft AppInsights](https://www.visualstudio.com/features/application-insights-vs)**
+3. **[Performance Counters](https://msdn.microsoft.com/pl-pl/library/windows/desktop/aa373083%28v=vs.85%29.aspx)**
 
 If you don't have any monitoring systems configured to run with Akka.Monitoring, no problem - the extension will no-op all stat collection calls by default.
 
@@ -116,6 +117,11 @@ Both of these techniques expose the following methods available for capturing me
 * `Gauge` - for recording arbitrary non-counter metrics, such as the average size of a message. 
 
 All of these methods have extensive Intellisense documentation.
+
+### Using Performance Counters and perfmon to display metrics
+![alt tag](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/performance_counters.gif)
+**Akka.Monitoring.PerformanceCounters** allows to track agent metrics as performance counters. Once `ActorPerformanceCountersMonitor` is registered via `ActorMonitoringExtension` it automatically creates Performance Counters Category named **Akka** which contains all metrics related with agents events:
+![alt tag](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/perfmance_counters_category.png)
 
 ## Extending Akka.Monitoring
 Have a different monitoring system you want to use? It's easy to integrate into Akka.Monitoring - just implement your own subclass from `AbstractActorMonitoringClient` ([source](https://github.com/Aaronontheweb/akka-monitoring/blob/master/src/Akka.Monitoring/Impl/AbstractActorMonitoringClient.cs)) and follow the registration steps above.
