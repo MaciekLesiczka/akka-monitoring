@@ -118,10 +118,30 @@ Both of these techniques expose the following methods available for capturing me
 
 All of these methods have extensive Intellisense documentation.
 
-### Using Performance Counters and perfmon to display metrics
-![alt tag](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/performance_counters.gif)
-**Akka.Monitoring.PerformanceCounters** allows to track agent metrics as performance counters. Once `ActorPerformanceCountersMonitor` is registered via `ActorMonitoringExtension` it automatically creates Performance Counters Category named **Akka** which contains all metrics related with agents events:
-![alt tag](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/perfmance_counters_category.png)
+### Using Performance Counters
+
+**Akka.Monitoring.PerformanceCounters** allows to track all metrics in perfmon. Once `ActorPerformanceCountersMonitor` is registered via `ActorMonitoringExtension` it automatically creates Performance Counters Category named **Akka** which contains all metrics related with agents events. There is one performance counter created for every metric (built-in or custom). Also, for every actor type there is performance counter instance which allows to track metrics per single actor class:
+
+![alt performance counters selection](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/perfmance_counters_category.png)
+
+An example of perfmon chart displaying metrics from **Akka.Monitoring.PerformanceCounters.Demo**:
+
+![alt perfmon chart](https://raw.github.com/MaciekLesiczka/akka-monitoring/dev/images/performance_counters.gif)
+
+**Custom metrics registration**
+
+In order to create custom counters, timing metrics and gauges, you need to provide `CustomMetrics` with metric names  to `ActorPerformanceCountersMonitor` constructor:
+
+    var registeredMonitor = ActorMonitoringExtension.RegisterMonitor(_system,
+        new ActorPerformanceCountersMonitor(
+            new CustomMetrics
+            {
+                Counters = { "akka.custom.metric1", "akka.custom.metric2" },
+                Gauges = { "akka.messageboxsize"},
+                Timers = { "akka.handlertime" }
+            }));
+
+Metric names will become performance counter names, so make sure they are unique among Akka Pefmormance Counters Category.
 
 ## Extending Akka.Monitoring
 Have a different monitoring system you want to use? It's easy to integrate into Akka.Monitoring - just implement your own subclass from `AbstractActorMonitoringClient` ([source](https://github.com/Aaronontheweb/akka-monitoring/blob/master/src/Akka.Monitoring/Impl/AbstractActorMonitoringClient.cs)) and follow the registration steps above.
